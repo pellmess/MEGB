@@ -81,7 +81,7 @@ em_gb_lmm <- function(Y,                          # target variable
 
     suppressMessages(
     # fit LMM to data
-    lmefit <- lme4::lmer(formula_lmm, data = data, REML = FALSE)
+    lmefit <- lme4::lmer(formula_lmm, data = data, REML = TRUE)
     )
     
     # save Log-Likelihood of LMM
