@@ -1,0 +1,75 @@
+---
+output: github_document
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  out.width = "100%"
+)
+```
+
+# MEGB
+
+<!-- badges: start -->
+<!-- badges: end -->
+
+\pkg{MEGB} enables users to make unit-level as well as area-level estimates for 
+hierarchical data in the context of Small Area Estimation
+
+## Installation
+
+You can install MEGB from Github with:
+
+``` {r}
+# install.packages("devtools")
+devtools::install_github("pellmess/MEGB")
+```
+
+## Usage
+
+To understand how to use MEGB:
+
+```{r usage}
+library(MEGB)
+
+# Loading data - population and sample data
+data("population_data")
+data("sample_data")
+
+# Example with MSE = TRUE
+
+params <- list(eta = 0.1,      # learning rate
+               nrounds = 100   # number of iterations
+               )
+
+# creates object of class MEGB, which includes point estimates as well as 
+# uncertainty estimates
+
+result <- megb(Y = sample_data$y,
+               X = sample_data[, 2:6],
+               dom_name = "domain",
+               smp_data = sample_data,
+               pop_data = population_data,
+               gradient_params = params,
+               na.rm = TRUE,
+               seed = 1,
+               mse = TRUE,
+               B = 2,
+               bootstrap_cores = 0,
+               gbm_engine = "xgboost"
+               )
+
+result
+```
+
+The package also includes a plot method:
+
+```{r plot, echo = FALSE, out.width = "75%"}
+plot(result)
+```
+
