@@ -25,9 +25,14 @@ train_gbmodel <- function(model_type,
       nrounds    <- params$nrounds %||% 1000
       xgb_params <- params[setdiff(names(params), "nrounds")]
       
+      dtrain <- xgboost::xgb.DMatrix(
+        data  = data.matrix(features_train),
+        label = response_train
+      )
+      
       cv <- xgb.cv(
         params  = xgb_params,
-        data    = data.matrix(features_train),
+        data    = dtrain,
         label   = response_train,
         nrounds = nrounds,
         nfold   = 5,
