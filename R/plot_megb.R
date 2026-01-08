@@ -83,7 +83,7 @@ plot.MEGB <- function(megb_object) {
         color = "Dataset"
       ) +
       plot_theme + # Einheitliches Styling anwenden
-      geom_vline(xintercept = megb_object$megb_model$boosting$niter,
+      geom_vline(xintercept = megb_object$megb_model$boosting$best_iter,
                  col = "black") +
       annotate(
         "text",
