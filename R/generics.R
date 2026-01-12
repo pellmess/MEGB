@@ -103,7 +103,7 @@ print.MEGB <- function(megb_object, ...) {
   cat("Boosting Information:
 ")
   cat(sprintf("Number of Boosting Iterations: %d
-", megb_object$megb_model$boosting$niter))
+", megb_object$megb_model$best_iter))
 
 }
 

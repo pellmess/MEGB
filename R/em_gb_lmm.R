@@ -132,7 +132,8 @@ em_gb_lmm <- function(Y,                          # target variable
     initial_random_effects = initial_random_effects, # initial value of random effects
     importance_matrix = importance_matrix,           # importance matrix
     eval_log = gbm_results$eval_log,                 # evaluation log for loss visualisation,
-    gradient_params = gradient_params                # updated GB parameters
+    gradient_params = gradient_params,                # updated GB parameters
+    best_iter = best_iter
   )
 
   # return results

@@ -27,10 +27,20 @@ plot_theme <-       theme_bw(base_size = 20) +
 
 
 plot.MEGB <- function(megb_object) {
-  
+  groesse <- 18
+  plot_theme <-       theme_bw(base_size = 20) +
+    theme(
+      text = element_text(size = groesse),
+      plot.title = element_text(size = groesse),
+      axis.title = element_text(size = groesse),
+      legend.text = element_text(size = groesse),
+      legend.position = "none", # Legende in Einzelplots aus
+      axis.text.x = element_text(hjust = 1, size = 12),
+      panel.grid.minor = element_blank() # Optional: Cleaner Look
+    )
   
   # QQ Plot for Random Effects
-  qqplot_random_effects <- function(megb_object) {
+  qqplot_random_effects <- function(megb_object, plot_theme) {
     # Daten extrahieren und in Dataframe umwandeln
     data <- data.frame(
       values = megb_object$megb_model$dom_name_effects[[1]][, 1]
@@ -50,7 +60,7 @@ plot.MEGB <- function(megb_object) {
   }
   
   # QQ Plot for Residuals
-  qqplot_residuals <- function(megb_object) {
+  qqplot_residuals <- function(megb_object, plot_theme) {
     # Daten extrahieren und in Dataframe umwandeln
     data <- data.frame(
       residuals = megb_object$megb_model$residuals
@@ -70,7 +80,7 @@ plot.MEGB <- function(megb_object) {
   }
   
   # Train vs. Validation Loss Plot
-  train_validation_loss_plot <- function(megb_object) {
+  train_validation_loss_plot <- function(megb_object, plot_theme) {
     plot <- megb_object$megb_model$eval_log %>%
       ggplot(aes(x = iter)) +
       geom_line(aes(y = train_rmse_mean, color = "Train"), lwd = 1) +
@@ -83,11 +93,11 @@ plot.MEGB <- function(megb_object) {
         color = "Dataset"
       ) +
       plot_theme + # Einheitliches Styling anwenden
-      geom_vline(xintercept = megb_object$megb_model$boosting$best_iter,
+      geom_vline(xintercept = megb_object$megb_model$best_iter,
                  col = "black") +
       annotate(
         "text",
-        x = megb_object$megb_model$boosting$niter,
+        x = megb_object$megb_model$best_iter,
         y = max(megb_object$megb_model$eval_log$train_rmse_mean),
         label = "Used nrounds",
         vjust = 1.5,
@@ -102,24 +112,23 @@ plot.MEGB <- function(megb_object) {
   }
   
   # Feature Importance Plot
-  importance_plot <- function(megb_object, ...) {
+  importance_plot <- function(megb_object) {
     # Plot feature importance
     importance <- megb_object$megb_model$importance_matrix
     p <- xgb.ggplot.importance(importance,
                                main = "Feature Importance",
                                xlab = "Importance",
-                               ylab = "Features",
-                               ...) + plot_theme +
+                               ylab = "Features") + plot_theme +
       scale_fill_viridis_d(option = "D", end = 0.8)
     print(p)
   }
   
   # List of plot functions
   plot_functions <- list(
-    qqplot_random_effects,
-    qqplot_residuals,
-    train_validation_loss_plot,
-    importance_plot
+    function(x) qqplot_random_effects(x, plot_theme),
+    function(x) qqplot_residuals(x, plot_theme),
+    function(x) train_validation_loss_plot(x, plot_theme),
+    function(x) importance_plot(x)
   )
   if (megb_object$gbm_engine != "xgboost") {
     warning(

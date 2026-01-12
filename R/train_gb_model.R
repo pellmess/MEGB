@@ -43,12 +43,12 @@ train_gbmodel <- function(model_type,
       
       best_iter <- cv$early_stop$best_iteration
       
-      booster <- xgboost(
-        x = features_train,
-        y = response_train,
+      booster <- xgb.train(
+        data    = dtrain,
         params  = xgb_params,
         nrounds = best_iter,
-        verbose = 0
+        verbosity = 0,
+        print_every_n = 0
       )
       
       list(
